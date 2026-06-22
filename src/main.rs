@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
-use coop_app::{http::router, infra::fake_ports};
+use coop_app::{http::router, infra::ports_from_env};
 
 #[tokio::main]
 async fn main() {
-    let ports = Arc::new(fake_ports());
+    let ports = Arc::new(ports_from_env().await);
     let app = router(ports);
 
     let port = std::env::var("PORT").unwrap_or_else(|_| "8080".into());

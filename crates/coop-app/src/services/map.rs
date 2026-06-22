@@ -119,7 +119,8 @@ async fn deploy_single_map(ports: &Ports, config: &MapConfig, map: &KnownMap) ->
     }
 
     let next_version = current.as_ref().map(|m| m.version + 1).unwrap_or(1);
-    let zip_name = format!("{}.v{:04}.zip", map.folder_name, next_version);
+    let short_hash = &new_checksum[..8];
+    let zip_name = format!("{}.v{:04}.{}.zip", map.folder_name, next_version, short_hash);
     let zip_path = config.map_dir.join(&zip_name);
 
     if !config.dry_run {
