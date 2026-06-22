@@ -34,16 +34,18 @@ impl DbPort for FakeDb {
         Ok(self.maps.lock().unwrap().get(&map_id).cloned())
     }
 
-    async fn update_map(&self, map_id: i32, version: i32, filename: &str) -> DbResult<()> {
+    async fn update_map(&self, map_id: i32, version: i32, filename: &str, checksum: &str) -> DbResult<()> {
         let mut maps = self.maps.lock().unwrap();
         let map = maps.entry(map_id).or_insert_with(|| CoopMap {
             id: map_id,
             name: format!("map_{map_id}"),
             version: 0,
             filename: String::new(),
+            checksum: String::new(),
         });
         map.version = version;
         map.filename = filename.to_string();
+        map.checksum = checksum.to_string();
         Ok(())
     }
 
@@ -79,7 +81,7 @@ mod tests {
     #[tokio::test]
     async fn update_map_creates_if_missing() {
         let db = FakeDb::default();
-        db.update_map(42, 3, "maps/foo.v0003.zip").await.unwrap();
+        db.update_map(42, 3, "maps/foo.v0003.zip", "abc123").await.unwrap();
         let map = db.get_map(42).await.unwrap().unwrap();
         assert_eq!(map.version, 3);
         assert_eq!(map.filename, "maps/foo.v0003.zip");

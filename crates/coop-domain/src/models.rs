@@ -6,6 +6,7 @@ pub struct CoopMap {
     pub name: String,
     pub version: i32,
     pub filename: String,
+    pub checksum: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -87,7 +88,7 @@ mod tests {
 
     #[test]
     fn coop_map_fields() {
-        let map = CoopMap { id: 42, name: "Fort Clarke".into(), version: 3, filename: "maps/fort.v0003.zip".into() };
+        let map = CoopMap { id: 42, name: "Fort Clarke".into(), version: 3, filename: "maps/fort.v0003.zip".into(), checksum: "abc".into() };
         assert_eq!(map.id, 42);
         assert_eq!(map.version, 3);
     }

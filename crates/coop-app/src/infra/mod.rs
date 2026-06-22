@@ -3,6 +3,7 @@ pub mod db_fake;
 pub mod fs_fake;
 pub mod git_fake;
 pub mod github_fake;
+pub mod test_support;
 
 use std::sync::Arc;
 
