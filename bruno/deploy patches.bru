@@ -1,0 +1,15 @@
+meta {
+  name: Deploy Patches
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/patches/deploy
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Deploy Maps
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/maps/deploy
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

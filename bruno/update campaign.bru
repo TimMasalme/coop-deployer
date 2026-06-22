@@ -1,0 +1,22 @@
+meta {
+  name: Update Campaign
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{base_url}}/campaigns/1
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name": "UEF Campaign",
+    "map_ids": [1, 3, 4, 5, 6, 7]
+  }
+}
