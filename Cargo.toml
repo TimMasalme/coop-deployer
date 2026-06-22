@@ -1,0 +1,15 @@
+[workspace]
+members = [
+    ".",
+    "crates/coop-domain",
+    "crates/coop-app",
+]
+resolver = "2"
+
+[package]
+name = "faf-coop-deployer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+coop-app = { path = "crates/coop-app" }
