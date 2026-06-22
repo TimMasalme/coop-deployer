@@ -14,12 +14,11 @@ impl PatchConfig {
         Ok(Self {
             repo: std::env::var("COOP_PATCH_REPO")
                 .unwrap_or_else(|_| "FAForever/fa-coop".into()),
-            tag: std::env::var("PATCH_VERSION")
-                .map_err(|_| DeployError::new("PATCH_VERSION env var required"))?,
+            tag: std::env::var("PATCH_VERSION").unwrap_or_else(|_| "latest".into()),
             version: std::env::var("PATCH_VERSION")
-                .map_err(|_| DeployError::new("PATCH_VERSION env var required"))?
-                .parse()
-                .map_err(|_| DeployError::new("PATCH_VERSION must be an integer"))?,
+                .ok()
+                .and_then(|v| v.parse().ok())
+                .unwrap_or(1),
             dry_run: std::env::var("DRY_RUN").as_deref() == Ok("true"),
         })
     }
