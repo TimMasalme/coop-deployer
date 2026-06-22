@@ -43,3 +43,32 @@ impl_error!(GitError);
 impl_error!(FsError);
 impl_error!(GithubError);
 impl_error!(DeployError);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn auth_error_display() {
+        let e = AuthError::new("invalid token");
+        assert_eq!(e.to_string(), "invalid token");
+    }
+
+    #[test]
+    fn auth_error_forbidden() {
+        let e = AuthError::forbidden("role required");
+        assert_eq!(e.to_string(), "role required");
+    }
+
+    #[test]
+    fn db_error_display() {
+        let e = DbError::new("connection refused");
+        assert_eq!(e.to_string(), "connection refused");
+    }
+
+    #[test]
+    fn deploy_error_display() {
+        let e = DeployError::new("map not found");
+        assert_eq!(e.to_string(), "map not found");
+    }
+}

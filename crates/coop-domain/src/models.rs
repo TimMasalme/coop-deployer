@@ -53,3 +53,48 @@ impl CallerIdentity {
         self.roles.iter().any(|r| r == role)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn caller_identity_has_role_true() {
+        let identity = CallerIdentity {
+            user_id: 1,
+            username: "alice".into(),
+            roles: vec!["COOP_DEPLOYER".into(), "USER".into()],
+        };
+        assert!(identity.has_role("COOP_DEPLOYER"));
+    }
+
+    #[test]
+    fn caller_identity_has_role_false() {
+        let identity = CallerIdentity {
+            user_id: 1,
+            username: "alice".into(),
+            roles: vec!["USER".into()],
+        };
+        assert!(!identity.has_role("COOP_DEPLOYER"));
+    }
+
+    #[test]
+    fn deploy_result_default_is_zero() {
+        let result = DeployResult::default();
+        assert_eq!(result.updated, 0);
+        assert_eq!(result.skipped, 0);
+    }
+
+    #[test]
+    fn coop_map_fields() {
+        let map = CoopMap { id: 42, name: "Fort Clarke".into(), version: 3, filename: "maps/fort.v0003.zip".into() };
+        assert_eq!(map.id, 42);
+        assert_eq!(map.version, 3);
+    }
+
+    #[test]
+    fn campaign_map_ids_ordered() {
+        let campaign = Campaign { id: 1, name: "UEF".into(), map_ids: vec![10, 20, 30] };
+        assert_eq!(campaign.map_ids, vec![10, 20, 30]);
+    }
+}
