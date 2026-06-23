@@ -25,8 +25,8 @@ impl MapConfig {
     }
 }
 
-/// All 31 co-op maps known to FAF, matching the IDs in the database.
-/// Ported from CoopMapDeployer.kt.
+/// All co-op maps known to FAF, matching the IDs in the database.
+/// Ported from CoopMapDeployer.kt (42 maps as of 2026-06).
 pub struct KnownMap {
     pub id: i32,
     pub folder_name: &'static str,
@@ -62,13 +62,25 @@ pub const KNOWN_MAPS: &[KnownMap] = &[
     KnownMap { id: 24, folder_name: "SCCA_Coop_R05" },
     KnownMap { id: 25, folder_name: "SCCA_Coop_R06" },
     // FAF originals
-    KnownMap { id: 26, folder_name: "FAF_Coop_Operation_Prothyon_16" },
-    KnownMap { id: 27, folder_name: "FAF_Coop_Operation_Fort_Clarke_Assault" },
-    KnownMap { id: 28, folder_name: "FAF_Coop_Operation_Novax_Station_Assault" },
-    KnownMap { id: 29, folder_name: "FAF_Coop_Operation_Tight_Spot" },
-    KnownMap { id: 30, folder_name: "FAF_Coop_Operation_Black_Day" },
-    KnownMap { id: 31, folder_name: "FAF_Coop_Operation_Overlord" },
-    KnownMap { id: 49, folder_name: "FAF_Coop_Operation_Tha_Thuum" },
+    KnownMap { id: 26, folder_name: "FAF_Coop_Prothyon_16" },
+    KnownMap { id: 27, folder_name: "FAF_Coop_Fort_Clarke_Assault" },
+    KnownMap { id: 28, folder_name: "FAF_Coop_Theta_Civilian_Rescue" },
+    KnownMap { id: 31, folder_name: "FAF_Coop_Novax_Station_Assault" },
+    KnownMap { id: 32, folder_name: "FAF_Coop_Operation_Tha_Atha_Aez" },
+    KnownMap { id: 33, folder_name: "FAF_Coop_Havens_Invasion" },
+    KnownMap { id: 35, folder_name: "FAF_Coop_Operation_Rescue" },
+    KnownMap { id: 36, folder_name: "FAF_Coop_Operation_Uhthe_Thuum_QAI" },
+    KnownMap { id: 37, folder_name: "FAF_Coop_Operation_Yath_Aez" },
+    KnownMap { id: 38, folder_name: "FAF_Coop_Operation_Ioz_Shavoh_Kael" },
+    KnownMap { id: 39, folder_name: "FAF_Coop_Operation_Trident" },
+    KnownMap { id: 40, folder_name: "FAF_Coop_Operation_Blockade" },
+    KnownMap { id: 41, folder_name: "FAF_Coop_Operation_Golden_Crystals" },
+    KnownMap { id: 42, folder_name: "FAF_Coop_Operation_Holy_Raid" },
+    KnownMap { id: 45, folder_name: "FAF_Coop_Operation_Tight_Spot" },
+    KnownMap { id: 47, folder_name: "FAF_Coop_Operation_Overlord_Surth_Velsok" },
+    KnownMap { id: 48, folder_name: "FAF_Coop_Operation_Rebels_Rest" },
+    KnownMap { id: 49, folder_name: "FAF_Coop_Operation_Red_Revenge" },
+    // FAF_Coop_Seabring_Defense not in Kotlin script — skip until confirmed
 ];
 
 pub async fn deploy_all_maps(ports: &Ports, config: &MapConfig) -> Result<DeployResult, DeployError> {

@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use sqlx::PgPool;
+use sqlx::MySqlPool;
 use sqlx::Row;
 
 use coop_domain::{
@@ -10,12 +10,12 @@ use coop_domain::{
 use crate::ports::db::{DbPort, DbResult};
 
 pub struct SqlxDb {
-    pool: PgPool,
+    pool: MySqlPool,
 }
 
 impl SqlxDb {
     pub async fn connect(database_url: &str) -> Result<Self, DbError> {
-        let pool = PgPool::connect(database_url)
+        let pool = MySqlPool::connect(database_url)
             .await
             .map_err(|e| DbError::new(format!("DB connect failed: {e}")))?;
         Ok(Self { pool })
@@ -25,15 +25,17 @@ impl SqlxDb {
 #[async_trait]
 impl DbPort for SqlxDb {
     async fn get_map(&self, map_id: i32) -> DbResult<Option<CoopMap>> {
-        let row = sqlx::query("SELECT id, version, filename FROM coop_map WHERE id = $1")
+        let row = sqlx::query("SELECT id, version, filename FROM coop_map WHERE id = ?")
             .bind(map_id)
             .fetch_optional(&self.pool)
             .await
             .map_err(|e| DbError::new(e.to_string()))?;
 
         Ok(row.map(|r| {
-            let id: i32 = r.get("id");
-            let version: i32 = r.get("version");
+            let id = r.get::<u32, _>("id") as i32;
+            // DECIMAL(4,0) in MySQL — read as Decimal, cast to i32
+            let version = r.get::<rust_decimal::Decimal, _>("version")
+                .try_into().unwrap_or(0i32);
             let filename: String = r.get("filename");
             // Parse short checksum from filename: name.v0001.abc12345.zip
             let checksum = filename
@@ -47,10 +49,10 @@ impl DbPort for SqlxDb {
     }
 
     async fn update_map(&self, map_id: i32, version: i32, filename: &str, _checksum: &str) -> DbResult<()> {
-        sqlx::query("UPDATE coop_map SET version = $1, filename = $2 WHERE id = $3")
+        sqlx::query("UPDATE coop_map SET version = ?, filename = ? WHERE id = ?")
             .bind(version)
             .bind(filename)
-            .bind(map_id)
+            .bind(map_id as u32)
             .execute(&self.pool)
             .await
             .map_err(|e| DbError::new(e.to_string()))?;
@@ -66,15 +68,15 @@ impl DbPort for SqlxDb {
                    GROUP BY fileId
                ) t
                JOIN updates_coop_files uf ON uf.fileId = t.fileId AND uf.version = t.v
-               WHERE uf.fileId = $1"#,
+               WHERE uf.fileId = ?"#,
         )
-        .bind(file_id)
+        .bind(file_id as u16)
         .fetch_optional(&self.pool)
         .await
         .map_err(|e| DbError::new(e.to_string()))?;
 
         Ok(row.map(|r| PatchRecord {
-            file_id: r.get("file_id"),
+            file_id: r.get::<u16, _>("file_id") as i32,
             name: r.get("name"),
             md5: r.get("md5"),
             version: r.get("version"),
@@ -82,17 +84,17 @@ impl DbPort for SqlxDb {
     }
 
     async fn upsert_patch(&self, record: PatchRecord) -> DbResult<()> {
-        sqlx::query("DELETE FROM updates_coop_files WHERE fileId = $1 AND version = $2")
-            .bind(record.file_id)
+        sqlx::query("DELETE FROM updates_coop_files WHERE fileId = ? AND version = ?")
+            .bind(record.file_id as u16)
             .bind(record.version - 1)
             .execute(&self.pool)
             .await
             .map_err(|e| DbError::new(e.to_string()))?;
 
         sqlx::query(
-            "INSERT INTO updates_coop_files (fileId, version, name, md5, obselete) VALUES ($1, $2, $3, $4, 0)",
+            "INSERT INTO updates_coop_files (fileId, version, name, md5, obselete) VALUES (?, ?, ?, ?, 0)",
         )
-        .bind(record.file_id)
+        .bind(record.file_id as u16)
         .bind(record.version)
         .bind(&record.name)
         .bind(&record.md5)

@@ -15,7 +15,8 @@ tower-http = { version = "0.5", features = ["auth"] }
 http = "1"
 
 # Phase 5 — real infra
-sqlx = { version = "0.8", features = ["postgres", "runtime-tokio", "macros"] }
+sqlx = { version = "0.8", features = ["mysql", "runtime-tokio", "macros", "rust_decimal"] }
+rust_decimal = "1"
 reqwest = { version = "0.12", features = ["json"] }
 git2 = "0.19"
 zip = "2"
