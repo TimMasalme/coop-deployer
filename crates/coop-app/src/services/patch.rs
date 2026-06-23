@@ -75,7 +75,7 @@ pub async fn deploy_patches(ports: &Ports, config: &PatchConfig) -> Result<Deplo
                 .await
                 .map_err(|e| DeployError::new(format!("download failed for {}: {e}", patch.name)))?,
             None => {
-                eprintln!("warning: no asset found for patch '{}', skipping", patch.name);
+                eprintln!("info: patch '{}' not in release {} (unchanged), skipping", patch.name, config.tag);
                 result.skipped += 1;
                 continue;
             }
