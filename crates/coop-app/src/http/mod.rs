@@ -4,6 +4,7 @@ pub mod middleware;
 use std::sync::Arc;
 
 use axum::{
+    http::StatusCode,
     middleware as axum_middleware,
     routing::{get, post, put},
     Router,
@@ -24,5 +25,7 @@ pub fn router(ports: Arc<Ports>) -> Router {
         ))
         .with_state(ports);
 
-    Router::new().merge(protected)
+    Router::new()
+        .route("/health", get(|| async { StatusCode::OK }))
+        .merge(protected)
 }
